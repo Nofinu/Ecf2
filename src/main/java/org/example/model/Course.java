@@ -3,6 +3,7 @@ package org.example.model;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Course {
@@ -15,22 +16,22 @@ public class Course {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    private int place;
+
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "course_customer",
             joinColumns = @JoinColumn(name = "id_course"),
             inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Customer> customers;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "course_coach",
-            joinColumns = @JoinColumn(name = "id_course"),
-            inverseJoinColumns = @JoinColumn(name = "id"))
+    @ManyToMany(mappedBy = "courses")
     private List<Coach> coachs;
 
-    public Course(String title, int duration, Date date) {
+    public Course(String title, int duration, Date date, int place) {
         this.title = title;
         this.duration = duration;
         this.date = date;
+        this.place = place;
     }
 
     public Course() {
@@ -76,30 +77,40 @@ public class Course {
         this.customers = customers;
     }
 
+    public int getPlace() {
+        return place;
+    }
+
+    public void setPlace(int place) {
+        this.place = place;
+    }
+
+    public List<Coach> getCoachs() {
+        return coachs;
+    }
+
+    public void setCoachs(List<Coach> coachs) {
+        this.coachs = coachs;
+    }
+
     public boolean addCustomer(Customer customer) {
-        if (customer != null) {
+        if (customer != null && this.place>0) {
             this.customers.add(customer);
+            place -=1;
             return true;
         } else {
             return false;
         }
     }
 
-    public void removeCustomer(Customer customer) {
-        this.customers.remove(customer);
-    }
-
-    public boolean addCoach(Coach coach) {
-        if (coach != null) {
-            this.coachs.add(coach);
+    public boolean removeCustomer(Customer customer) {
+        this.customers.forEach(System.out::println);
+        if(this.customers.contains(customer)){
+            this.customers.remove(customer);
+            this.place +=1;
             return true;
-        } else {
-            return false;
         }
-    }
-
-    public void removeCoach(Coach coach) {
-        this.coachs.remove(coach);
+        return false;
     }
 
     @Override
@@ -109,5 +120,19 @@ public class Course {
                 ", title=" + title +
                 ", duration=" + duration +
                 ", date=" + date;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return id == course.id && duration == course.duration && place == course.place && Objects.equals(title, course.title) && Objects.equals(date, course.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, title, duration, date, place);
     }
 }

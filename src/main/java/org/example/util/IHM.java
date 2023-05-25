@@ -79,6 +79,12 @@ public class IHM {
                 case 15 :
                     showCourseCoachAction();
                     break;
+                case 16:
+                    deleteCustomerFromCourseAction();
+                    break;
+                case 17:
+                    deleteCoachFromCourseAction();
+                    break;
                 case 0:
                     System.out.println("Goodbye");
                     break;
@@ -110,6 +116,9 @@ public class IHM {
         System.out.println("13-- afficher tout les cours a venir");
         System.out.println("14-- afficher tout les cours d'un client a venir");
         System.out.println("15-- afficher tout les cours d'un coach a venir");
+        System.out.println("----------------");
+        System.out.println("16-- supprimer un client d'un cours");
+        System.out.println("17-- supprimer un coach d'un cours");
     }
 
     //gestion Customer
@@ -219,6 +228,31 @@ public class IHM {
         System.out.println("-------- afficher tout les clients --------");
         customerService.findAll().forEach(System.out::println);
     }
+    private void deleteCustomerFromCourseAction (){
+        System.out.println("-------- supprimer un client d'un cours --------");
+        System.out.println("id du client :");
+        int idCustomer = scanner.nextInt();
+        System.out.println("id du cours :");
+        int idCourse = scanner.nextInt();
+
+        Customer customer = customerService.findById(idCustomer);
+        Course course = courseService.findById(idCourse);
+
+        if(customer != null && course != null){
+            if(course.removeCustomer(customer)){
+                customer.removeCourse(course);
+                if(courseService.update(course)){
+                    System.out.println("client suprimer du cours ");
+                }else{
+                    System.out.println("erreur lors de la supression");
+                }
+            }else{
+                System.out.println("le client n'etait pas inscrit au cours");
+            }
+        }else{
+            System.out.println("erreure lors de la recuperation client ou cours");
+        }
+    }
 
     //gestion Course
     private void addCourseAction (){
@@ -237,7 +271,11 @@ public class IHM {
                 return;
             }
 
-            Course course = new Course(title,durationMin,date);
+            System.out.println("nombre de places :");
+            int place = scanner.nextInt();
+            scanner.nextLine();
+
+            Course course = new Course(title,durationMin,date,place);
             if(courseService.create(course)){
                 System.out.println("le cours a bien ete crée");
             }else{
@@ -316,12 +354,15 @@ public class IHM {
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 if(!course.getDate().before( formatter.parse( formatter.format(new Date()) ) )){
                     if(course.getDate().before(customer.getDateEndInscription())){
-                        course.addCustomer(customer);
-                        customer.addCourse(course);
-                        if(customerService.update(customer) && courseService.update(course)){
-                            System.out.println("client ajouté au cours");
-                        }else{
-                            System.out.println("erreure lors de l'ajout");
+                        if(course.addCustomer(customer)){
+                            customer.addCourse(course);
+                            if(customerService.update(customer) && courseService.update(course)){
+                                System.out.println("client ajouté au cours");
+                            }else{
+                                System.out.println("erreure lors de l'ajout");
+                            }
+                        }else {
+                            System.out.println("le cours n'as plus de place");
                         }
                     }else{
                         System.out.println("periode d'abomment expiré a la date de se cours");
@@ -429,7 +470,7 @@ public class IHM {
     }
     private void addCoachToCourseAction (){
         try{
-            System.out.println("-------- ajout d'un Client a un cours --------");
+            System.out.println("-------- ajout d'un coach a un cours --------");
             System.out.println("id du coach :");
             int idCustomer = scanner.nextInt();
             System.out.println("id du cours :");
@@ -440,9 +481,8 @@ public class IHM {
             if(coach != null && course!= null){
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 if(!course.getDate().before( formatter.parse( formatter.format(new Date()) ) )){
-                    course.addCoach(coach);
                     coach.addCourse(course);
-                    if(coachService.update(coach) && courseService.update(course)){
+                    if(coachService.update(coach) ){
                         System.out.println("coach ajouté au cours");
                     }else{
                         System.out.println("erreure lors de l'ajout");
@@ -451,12 +491,37 @@ public class IHM {
                     System.out.println("veuillez choisir un cours qui n'est pas deja passé");
                 }
             } else{
-                System.out.println("client ou cours incorrecte");
+                System.out.println("coach ou cours incorrecte");
             }
         }catch(InputMismatchException e){
             System.out.println("entrer une valeur valide");
         }catch (Exception e){
             System.out.println(e.getMessage());
+        }
+    }
+
+    private void deleteCoachFromCourseAction (){
+        System.out.println("-------- supprimer un coach d'un cours --------");
+        System.out.println("id du coach :");
+        int idCustomer = scanner.nextInt();
+        System.out.println("id du cours :");
+        int idCourse = scanner.nextInt();
+
+        Coach coach = coachService.findById(idCustomer);
+        Course course = courseService.findById(idCourse);
+
+        if(coach != null && course != null){
+            if(coach.removeCourse(course)){
+                if(coachService.update(coach)){
+                    System.out.println("coach suprimer du cours ");
+                }else{
+                    System.out.println("erreur lors de la supression");
+                }
+            }else{
+                System.out.println("le coach n'etait pas inscrit au cours");
+            }
+        }else{
+            System.out.println("erreure lors de la recuperation coach ou cours");
         }
     }
 

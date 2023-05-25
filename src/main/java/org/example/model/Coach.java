@@ -1,15 +1,16 @@
 package org.example.model;
 
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
 public class Coach extends Person {
     private String sports;
 
-    @ManyToMany(mappedBy = "coachs", fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "coach_course",
+            joinColumns = @JoinColumn(name = "id"),
+            inverseJoinColumns = @JoinColumn(name = "id_course"))
     private List<Course> courses;
 
     public Coach(String lastName, String firstName, String sports) {
@@ -45,8 +46,12 @@ public class Coach extends Person {
         }
     }
 
-    public void removeCourse(Course course) {
-        this.courses.remove(course);
+    public boolean removeCourse(Course course) {
+        if(courses.contains(course)){
+            this.courses.remove(course);
+            return true;
+        }
+        return false;
     }
 
     @Override

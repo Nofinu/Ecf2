@@ -5,6 +5,7 @@ import org.hibernate.annotations.Comment;
 import javax.persistence.*;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Customer extends Person {
@@ -73,5 +74,13 @@ public class Customer extends Person {
                 ", firstName = " + this.getFirstName() +
                 ", dateEndInscription = " + dateEndInscription
                 +"  "+ address;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Customer customer = (Customer) o;
+        return this.getId() == customer.getId();
     }
 }
