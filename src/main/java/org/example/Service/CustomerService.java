@@ -1,6 +1,5 @@
 package org.example.Service;
 
-import com.mysql.cj.xdevapi.AddResult;
 import org.example.model.Address;
 import org.example.model.Customer;
 import org.hibernate.query.Query;

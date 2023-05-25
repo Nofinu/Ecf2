@@ -1,8 +1,9 @@
 package org.example.Service;
 
 import org.example.model.Course;
-import org.example.model.Customer;
+import org.hibernate.query.Query;
 
+import java.util.Date;
 import java.util.List;
 
 public class CourseService extends BaseService<Course> {
@@ -63,6 +64,17 @@ public class CourseService extends BaseService<Course> {
         List<Course> courses = null;
         session = sessionFactory.openSession();
         courses = session.createQuery("from Course ", Course.class).list();
+        session.close();
+        return courses;
+    }
+
+    public List<Course> findCoursebyDate (){
+        List<Course> courses =null;
+        session = sessionFactory.openSession();
+        Date today = new Date(System.currentTimeMillis());
+        Query<Course> courseQuery = session.createQuery("from Course where date >= :date");
+        courseQuery.setParameter("date",today);
+        courses = courseQuery.list();
         session.close();
         return courses;
     }

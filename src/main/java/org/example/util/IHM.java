@@ -1,25 +1,30 @@
 package org.example.util;
 
+import org.example.Service.CoachService;
 import org.example.Service.CourseService;
 import org.example.Service.CustomerService;
 import org.example.model.Address;
+import org.example.model.Coach;
 import org.example.model.Course;
 import org.example.model.Customer;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 
 public class IHM {
     private final Scanner scanner;
     private final CustomerService customerService;
     private final CourseService courseService;
+    private final CoachService coachService;
 
     public IHM() {
         scanner = new Scanner(System.in);
         customerService = new CustomerService();
         courseService = new CourseService();
+        coachService = new CoachService();
     }
 
     public void start() {
@@ -42,7 +47,7 @@ public class IHM {
                     showAllCustomerAction();
                     break;
                 case 5:
-                    addCustomerToCourse();
+                    addCustomerToCourseAction();
                     break;
                 case 6:
                     addCourseAction();
@@ -53,6 +58,27 @@ public class IHM {
                 case 8:
                     editCourseAction();
                     break;
+                case 9:
+                    addCoachAction();
+                    break;
+                case 10:
+                    deleteCoachAction();
+                    break;
+                case 11:
+                    editCoachAction();
+                    break;
+                case 12:
+                    addCoachToCourseAction();
+                    break;
+                case 13:
+                    showAllcourseAction();
+                    break;
+                case 14 :
+                    showCourseCustomerAction();
+                    break;
+                case 15 :
+                    showCourseCoachAction();
+                    break;
                 case 0:
                     System.out.println("Goodbye");
                     break;
@@ -61,7 +87,6 @@ public class IHM {
                     break;
             }
         } while (entry != 0);
-
         customerService.end();
     }
 
@@ -81,8 +106,11 @@ public class IHM {
         System.out.println("10-- suppresion d'un coach");
         System.out.println("11-- modification d'un coach");
         System.out.println("12-- ajout d'un coach a un cours");
+        System.out.println("----------------");
+        System.out.println("13-- afficher tout les cours a venir");
+        System.out.println("14-- afficher tout les cours d'un client a venir");
+        System.out.println("15-- afficher tout les cours d'un coach a venir");
     }
-
 
     //gestion Customer
     private void addCustomerAction() {
@@ -274,7 +302,7 @@ public class IHM {
             System.out.println("entrer une valeur correcte");
         }
     }
-    private void addCustomerToCourse (){
+    private void addCustomerToCourseAction (){
         try{
             System.out.println("-------- ajout d'un Client a un cours --------");
             System.out.println("id du client :");
@@ -287,10 +315,135 @@ public class IHM {
             if(customer != null && course!= null){
                 SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
                 if(!course.getDate().before( formatter.parse( formatter.format(new Date()) ) )){
-                    course.addCustomer(customer);
-                    customer.addCourse(course);
-                    if(customerService.update(customer) && courseService.update(course)){
-                        System.out.println("client ajouté au cours");
+                    if(course.getDate().before(customer.getDateEndInscription())){
+                        course.addCustomer(customer);
+                        customer.addCourse(course);
+                        if(customerService.update(customer) && courseService.update(course)){
+                            System.out.println("client ajouté au cours");
+                        }else{
+                            System.out.println("erreure lors de l'ajout");
+                        }
+                    }else{
+                        System.out.println("periode d'abomment expiré a la date de se cours");
+                    }
+                }else{
+                    System.out.println("veuillez choisir un cours qui n'est pas deja passé");
+                }
+            } else{
+                System.out.println("client ou cours incorrecte");
+            }
+        }catch(InputMismatchException e){
+            System.out.println("entrer une valeur valide");
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
+    private Date getDate (){
+        String dateStr = scanner.nextLine();
+        Date date;
+        try {
+            date = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
+        }catch (Exception e){
+            date = new Date();
+        }
+        if(date.before(new Date())){
+            System.out.println("entrer une date valide ");
+            return null;
+        }
+        return date;
+    }
+
+    // gestion des coach
+    private void addCoachAction (){
+        try {
+            System.out.println("-------- ajout d'un client --------");
+            System.out.println("prenom :");
+            String firstName = scanner.nextLine();
+            System.out.println("nom :");
+            String lastName = scanner.nextLine();
+            System.out.println("sport :");
+            String sport = scanner.nextLine();
+
+            Coach coach = new Coach(firstName,lastName,sport);
+            if(coachService.create(coach)){
+                System.out.println("coach crée");
+            }else{
+                System.out.println("erreure lors de la creation");
+            }
+
+        } catch (InputMismatchException e) {
+            System.out.println("entrer une valeure correcte");
+        }
+    }
+    private void deleteCoachAction(){
+        try {
+            System.out.println("-------- suppresion d'un coach --------");
+            System.out.println("id du coach :");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            Coach coach = coachService.findById(id);
+            if (coach != null) {
+                if (coachService.delete(coach)) {
+                    System.out.println("coach supprimer");
+                } else {
+                    System.out.println("erreure lors de la suppresion du coach");
+                }
+            } else {
+                System.out.println("erreure lors de la recuperation du coach");
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("entrer une valeure correcte");
+        }
+    }
+    private void editCoachAction (){
+        try {
+            System.out.println("-------- Moddification d'un coach --------");
+            System.out.println("id du coach a moddifier :");
+            int id = scanner.nextInt();
+            scanner.nextLine();
+
+            Coach coach = coachService.findById(id);
+            if (coach != null) {
+                System.out.println("nom ( " + coach.getLastName() + " ) :");
+                String lastName = scanner.nextLine();
+                coach.setLastName(lastName);
+
+                System.out.println("prenom ( " + coach.getFirstName() + " ) :");
+                String firstName = scanner.nextLine();
+                coach.setFirstName(firstName);
+
+                System.out.println("sport ( "+coach.getSports()+" ) :");
+                String sport = scanner.nextLine();
+                coach.setSports(sport);
+
+                if(coachService.update(coach)){
+                    System.out.println("coach modifié");
+                }else{
+                    System.out.println("erreure lors de la modification");
+                }
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("entrer une valeur correcte");
+        }
+    }
+    private void addCoachToCourseAction (){
+        try{
+            System.out.println("-------- ajout d'un Client a un cours --------");
+            System.out.println("id du coach :");
+            int idCustomer = scanner.nextInt();
+            System.out.println("id du cours :");
+            int idCourse = scanner.nextInt();
+
+            Coach coach = coachService.findById(idCustomer);
+            Course course = courseService.findById(idCourse);
+            if(coach != null && course!= null){
+                SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                if(!course.getDate().before( formatter.parse( formatter.format(new Date()) ) )){
+                    course.addCoach(coach);
+                    coach.addCourse(course);
+                    if(coachService.update(coach) && courseService.update(course)){
+                        System.out.println("coach ajouté au cours");
                     }else{
                         System.out.println("erreure lors de l'ajout");
                     }
@@ -307,21 +460,59 @@ public class IHM {
         }
     }
 
+    //affichage
+    private void showAllcourseAction (){
+        System.out.println("-------- afficher les cours a venir --------");
+        courseService.findCoursebyDate().forEach(System.out::println);
+    }
+    private void showCourseCustomerAction (){
+        System.out.println("-------- afficher les cours a venir d'un client --------");
+        System.out.println("id du client :");
+        int id = scanner.nextInt();
+        scanner.nextLine();
 
-
-
-    private Date getDate (){
-        String dateStr = scanner.nextLine();
-        Date date;
-        try {
-            date = new SimpleDateFormat("dd/MM/yyyy").parse(dateStr);
-        }catch (Exception e){
-            date = new Date();
+        Customer customer =customerService.findById(id);
+        if(customer != null){
+            Date today = getTodayDate();
+            if(today != null){
+                for (Course c: customer.getCourses()) {
+                    if(!c.getDate().before(today)){
+                        System.out.println(c);
+                    }
+                }
+            }else{
+                System.out.println("probleme sur la recuperation de la date");
+            }
         }
-        if(date.before(new Date())){
-            System.out.println("entrer une date valide ");
+    }
+    private void showCourseCoachAction (){
+        System.out.println("-------- afficher les cours a venir d'un coach --------");
+        System.out.println("id du coach :");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+
+        Coach coach =coachService.findById(id);
+        if(coach != null){
+            Date today = getTodayDate();
+            if(today != null){
+                for (Course c: coach.getCourses()) {
+                    if(!c.getDate().before(today)){
+                        System.out.println(c);
+                    }
+                }
+            }else{
+                System.out.println("probleme sur la recuperation de la date");
+            }
+        }
+    }
+    private Date getTodayDate (){
+        try{
+            SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+            Date today = formatter.parse( formatter.format(new Date()) );
+            return today;
+        }catch(Exception e){
+            System.out.println(e.getMessage());
             return null;
         }
-        return date;
     }
 }

@@ -15,11 +15,17 @@ public class Course {
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    @JoinTable(name = "Course_Customer",
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(name = "course_customer",
             joinColumns = @JoinColumn(name = "id_course"),
             inverseJoinColumns = @JoinColumn(name = "id"))
     private List<Customer> customers;
+
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "course_coach",
+            joinColumns = @JoinColumn(name = "id_course"),
+            inverseJoinColumns = @JoinColumn(name = "id"))
+    private List<Coach> coachs;
 
     public Course(String title, int duration, Date date) {
         this.title = title;
@@ -70,17 +76,30 @@ public class Course {
         this.customers = customers;
     }
 
-    public boolean addCustomer (Customer customer){
-        if(customer !=null){
+    public boolean addCustomer(Customer customer) {
+        if (customer != null) {
             this.customers.add(customer);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
-    public void removeCustomer (Customer customer){
+    public void removeCustomer(Customer customer) {
         this.customers.remove(customer);
+    }
+
+    public boolean addCoach(Coach coach) {
+        if (coach != null) {
+            this.coachs.add(coach);
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public void removeCoach(Coach coach) {
+        this.coachs.remove(coach);
     }
 
     @Override
@@ -89,6 +108,6 @@ public class Course {
                 "id=" + id +
                 ", title=" + title +
                 ", duration=" + duration +
-                ", date=" + date ;
+                ", date=" + date;
     }
 }

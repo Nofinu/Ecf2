@@ -52,15 +52,16 @@ public class Customer extends Person {
         this.courses = courses;
     }
 
-    public boolean addCourse (Course course){
-        if(course != null){
+    public boolean addCourse(Course course) {
+        if (course != null) {
             this.courses.add(course);
             return true;
-        }else{
+        } else {
             return false;
         }
     }
-    public void removeCourse(Course course){
+
+    public void removeCourse(Course course) {
         this.courses.remove(course);
     }
 
