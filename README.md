@@ -4,7 +4,7 @@
 
 ## Entitées :
 
->Personn :
+> **Personn** :
 >>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- firstName (string)
@@ -12,7 +12,7 @@
 
 <br/>
 
->customer inherit from Personn:
+> **customer** inherit from **Personn**:
 >>- <ins>**attribut:**<ins/>
 >>- dateEndIncription (date)
 >>- courses (list de course)
@@ -23,7 +23,7 @@
 
 <br/>
 
->Address :
+> **Address** :
 >>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- street (string)
@@ -32,7 +32,7 @@
 
 <br/>
 
->Course :
+> **Course** :
 >>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- title (String)
@@ -48,7 +48,7 @@
 
 <br/>
 
->Coach inherit from Personn:
+> **Coach** inherit from **Personn**:
 >>- <ins>**attribut:**<ins/>
 >>- sport (string)
 >>- courses (list course)
