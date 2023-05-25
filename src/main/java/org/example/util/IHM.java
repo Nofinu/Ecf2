@@ -208,10 +208,18 @@ public class IHM {
                 long nbDay = scanner.nextLong();
                 scanner.nextLine();
                 if (nbDay > 0) {
-                    long dateEndSec = customer.getDateEndInscription().getTime();
-                    long dateEndSecEdit = dateEndSec + nbDay * 86400000;
-                    Date dateEnd = new Date(dateEndSecEdit);
-                    customer.setDateEndInscription(dateEnd);
+                    if(customer.getDateEndInscription().before(new Date(System.currentTimeMillis()))){
+                        long dateSecNow = System.currentTimeMillis(); // recuperationd de la date actuelle en milliseconds
+                        long dateSecEnd = dateSecNow + 86400000 * nbDay; //ajout du nombres de  jours voulus en milliseconds
+                        Date dateEnd = new Date(dateSecEnd);
+                        customer.setDateEndInscription(dateEnd);
+                    }else{
+                        long dateEndSec = customer.getDateEndInscription().getTime();
+                        long dateEndSecEdit = dateEndSec + nbDay * 86400000;
+                        Date dateEnd = new Date(dateEndSecEdit);
+                        customer.setDateEndInscription(dateEnd);
+                    }
+
                 }
 
                 if (customerService.update(customer)) {
