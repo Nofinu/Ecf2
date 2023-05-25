@@ -2,6 +2,7 @@ package org.example.model;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Course {
@@ -10,12 +11,17 @@ public class Course {
     @Column(name = "id_course")
     private int id;
     private String title;
-    @Temporal(TemporalType.TIME)
-    private Date duration;
+    private int duration;
     @Temporal(TemporalType.DATE)
     private Date date;
 
-    public Course(String title, Date duration, Date date) {
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "Course_Customer",
+            joinColumns = @JoinColumn(name = "id_course"),
+            inverseJoinColumns = @JoinColumn(name = "id"))
+    private List<Customer> customers;
+
+    public Course(String title, int duration, Date date) {
         this.title = title;
         this.duration = duration;
         this.date = date;
@@ -40,11 +46,11 @@ public class Course {
         this.title = title;
     }
 
-    public Date getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Date duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
 
@@ -54,6 +60,27 @@ public class Course {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    public List<Customer> getCustomers() {
+        return customers;
+    }
+
+    public void setCustomers(List<Customer> customers) {
+        this.customers = customers;
+    }
+
+    public boolean addCustomer (Customer customer){
+        if(customer !=null){
+            this.customers.add(customer);
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    public void removeCustomer (Customer customer){
+        this.customers.remove(customer);
     }
 
     @Override

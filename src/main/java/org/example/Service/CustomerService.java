@@ -10,11 +10,6 @@ import java.util.List;
 public class CustomerService extends BaseService<Customer>{
 
     @Override
-    public void end() {
-        sessionFactory.close();
-    }
-
-    @Override
     public boolean create(Customer element) {
         try{
             session = sessionFactory.openSession();
@@ -97,6 +92,10 @@ public class CustomerService extends BaseService<Customer>{
         address =  addressQuery.getSingleResult();
         session.close();
         return address;
+    }
+
+    public void end() {
+        sessionFactory.close();
     }
 
 }

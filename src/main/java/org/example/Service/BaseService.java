@@ -21,8 +21,6 @@ public abstract class BaseService<T> {
         sessionFactory = new MetadataSources(registry).buildMetadata().buildSessionFactory();
     }
 
-    public abstract void  end();
-
     public abstract boolean create(T element);
 
     public abstract boolean update(T element);

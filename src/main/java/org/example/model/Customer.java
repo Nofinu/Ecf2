@@ -4,6 +4,7 @@ import org.hibernate.annotations.Comment;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 public class Customer extends Person {
@@ -15,6 +16,9 @@ public class Customer extends Person {
     @ManyToOne()
     @JoinColumn(name = "id_address", nullable = false)
     private Address address;
+
+    @ManyToMany(mappedBy = "customers",fetch = FetchType.EAGER)
+    private List<Course> courses;
 
     public Customer(String lastName, String firstName, Date dateEndInscription) {
         super(lastName, firstName);
@@ -38,6 +42,26 @@ public class Customer extends Person {
 
     public void setAddress(Address address) {
         this.address = address;
+    }
+
+    public List<Course> getCourses() {
+        return courses;
+    }
+
+    public void setCourses(List<Course> courses) {
+        this.courses = courses;
+    }
+
+    public boolean addCourse (Course course){
+        if(course != null){
+            this.courses.add(course);
+            return true;
+        }else{
+            return false;
+        }
+    }
+    public void removeCourse(Course course){
+        this.courses.remove(course);
     }
 
     @Override
