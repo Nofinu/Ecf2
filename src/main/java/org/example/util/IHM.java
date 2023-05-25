@@ -11,7 +11,6 @@ import org.example.model.Customer;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 public class IHM {
@@ -219,9 +218,7 @@ public class IHM {
                         Date dateEnd = new Date(dateEndSecEdit);
                         customer.setDateEndInscription(dateEnd);
                     }
-
                 }
-
                 if (customerService.update(customer)) {
                     System.out.println("client modifié");
                 } else {
@@ -507,7 +504,6 @@ public class IHM {
             System.out.println(e.getMessage());
         }
     }
-
     private void deleteCoachFromCourseAction (){
         System.out.println("-------- supprimer un coach d'un cours --------");
         System.out.println("id du coach :");
