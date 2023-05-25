@@ -1,26 +1,39 @@
 # ECF 2 : Application de gestion d'une salle de sport 
 
+---
+
 ## Entitées :
 
->- Personn :
+>Personn :
+>>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- firstName (string)
 >>- lastName (string)
 
->- customer inherit from Personn:
+<br/>
+
+>customer inherit from Personn:
+>>- <ins>**attribut:**<ins/>
 >>- dateEndIncription (date)
 >>- courses (list de course)
->- methodes:
+>
+>>- <ins>**methodes:**<ins/>
 >>- addCourse
 >>- removeCourse
 
->- Address :
+<br/>
+
+>Address :
+>>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- street (string)
 >>- city (string)
 >>- postalCode (string)
 
->- Course :
+<br/>
+
+>Course :
+>>- <ins>**attribut:**<ins/>
 >>- id (int)
 >>- title (String)
 >>- duration (int)
@@ -28,19 +41,27 @@
 >>- place (int)
 >>- customers (list customer)
 >>- coachs (list coach)
->- methodes:
+>
+>>- <ins>**methodes:**<ins/>
 >>- addCustomer
 >>- removeCustomer
 
->- Coach inherit from Personn:
+<br/>
+
+>Coach inherit from Personn:
+>>- <ins>**attribut:**<ins/>
 >>- sport (string)
 >>- courses (list course)
->- methodes:
+>
+>>- <ins>**methodes:**<ins/>
 >>- addCourse
 >>- removeCourse
+---
 
 ## MLD de la base de donnée :
 ![image](asset/MLD.png)
+
+---
 
 ## Service :
 utilisation du repository pattern pour harmoniser les different service et avoir dans chacun le CRUD de base.
@@ -55,8 +76,11 @@ méthode additionelle pour aller chercher les cours qui sont a venir (qui ne son
 ### CoachService :
 aucune méthode additionelle.
 
+---
+
 ## IHM :
 ### Menu :
+```
         -------- menu --------
         1-- ajouter un clients
         2-- supprimer un client
@@ -79,6 +103,7 @@ aucune méthode additionelle.
         ----------------
         16-- supprimer un client d'un cours
         17-- supprimer un coach d'un cours
+```
 
 - 1 à 4: CRUD du Customer (lors de la creation du client on a la possibilité de crée l'addresse ou si elle existe deja de liée se client a cette addresse).
 - 5 : Ajout d'un clients a un cours lors de l'ajout du client au cours on verifie si le client a un abonement actif a la date du cours et si le cours n'est pas encore passé et si le cours a encore des places de libre.
